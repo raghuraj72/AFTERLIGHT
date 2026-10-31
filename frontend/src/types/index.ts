@@ -5,15 +5,19 @@ export interface SourceCitation {
   snippet?: string;
   explanation?: string;
   is_verified?: boolean;
+  verified?: boolean;
+  confidence?: number;
 }
 
 export interface CommitCitation {
   commit_hash: string;
+  short_hash?: string;
   author: string;
   date: string;
   message: string;
   relevance?: string;
   is_verified?: boolean;
+  verified?: boolean;
 }
 
 export interface GhostCodeFinding {
@@ -43,16 +47,16 @@ export interface CommitMilestone {
   message: string;
   changed_files: string[];
   is_architectural_milestone: boolean;
-  milestone_reason?: string;
+  milestone_reason?: string | null;
 }
 
 export interface ArchitectureNode {
   id: string;
   label: string;
   type: 'module' | 'function' | 'class' | 'package' | 'entry_point';
-  file_path?: string;
+  file_path?: string | null;
   ghost_status: boolean;
-  ghost_finding_id?: string;
+  ghost_finding_id?: string | null;
   loc: number;
 }
 
@@ -76,6 +80,7 @@ export interface HealthScoreBreakdown {
   commit_vitality_score: number;
   formula_explanation: string;
   inputs_breakdown: Record<string, any>;
+  health_rating?: string;
 }
 
 export interface ResurrectionItem {
@@ -89,7 +94,7 @@ export interface ResurrectionItem {
   expected_benefit: string;
   relevant_files: string[];
   suggested_steps: string[];
-  diff_preview?: string;
+  diff_preview?: string | null;
   status: 'pending' | 'accepted' | 'rejected' | 'completed';
 }
 
@@ -138,7 +143,7 @@ export interface InvestigationResult {
   repo_path: string;
   is_demo: boolean;
   analyzed_at: string;
-  last_commit_date?: string;
+  last_commit_date?: string | null;
   total_files: number;
   total_lines_of_code: number;
   languages: Record<string, number>;
@@ -157,17 +162,23 @@ export interface InvestigationResult {
 export interface BenchmarkResult {
   status: string;
   benchmark_type: string;
-  total_ground_truth_targets: number;
+  total_ground_truth_targets?: number;
+  total_expected?: number;
+  total_detected?: number;
   true_positives: number;
   false_positives: number;
   false_negatives: number;
   precision: number;
   recall: number;
   f1_score: number;
-  citation_coverage_pct: number;
-  execution_time_ms: number;
-  target_matches: string[];
-  evaluation_timestamp: string;
+  citation_coverage_pct?: number;
+  source_citation_coverage?: number;
+  commit_citation_coverage?: number;
+  execution_time_ms?: number;
+  latency_ms?: number;
+  target_matches?: string[];
+  evaluation_timestamp?: string;
+  details?: string;
 }
 
 export interface FileContentResponse {

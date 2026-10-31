@@ -4,7 +4,7 @@
     "repo_name": "GHOST_ARCHIVE_DEMO",
     "repo_path": "C:\\Users\\RAGHURAJ P SINGH\\OneDrive\\Desktop\\AFTERLIGHT\\ghost_archive_demo",
     "is_demo": true,
-    "analyzed_at": "2026-10-31 18:29:20 UTC",
+    "analyzed_at": "2026-10-31 18:42:32 UTC",
     "last_commit_date": "2022-11-05T13:12:00+05:30",
     "total_files": 10,
     "total_lines_of_code": 161,
@@ -861,8 +861,8 @@
         "expected_benefit": "Allows new maintainers to understand mathematical parameters, edge states, and algorithm expectations.",
         "relevant_files": [
           "backend/auth_legacy.py",
-          "backend/pipeline.py",
-          "backend/utils.py"
+          "backend/utils.py",
+          "backend/pipeline.py"
         ],
         "suggested_steps": [
           "Add Google or Sphinx style docstrings to calculate_sensor_entropy and decrypt_cold_vault_keys",
@@ -883,8 +883,8 @@
         "expected_benefit": "Prevents confusion about active networking protocols and reduces maintenance surface area.",
         "relevant_files": [
           "backend/auth_legacy.py",
-          "backend/pipeline.py",
-          "backend/utils.py"
+          "backend/utils.py",
+          "backend/pipeline.py"
         ],
         "suggested_steps": [
           "Verify absence of external socket consumers",

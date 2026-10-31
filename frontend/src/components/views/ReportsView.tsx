@@ -4,7 +4,7 @@ import {
   ExternalLink, Sparkles, BarChart2 
 } from 'lucide-react';
 import { useInvestigation } from '../../context/InvestigationContext';
-import { getReportDownloadUrl, getReportHtmlUrl, fetchBenchmark } from '../../services/api';
+import { getReportDownloadUrl, getReportHtmlUrl, fetchBenchmark, generateClientMarkdown } from '../../services/api';
 import { BenchmarkResult } from '../../types';
 
 export const ReportsView: React.FC = () => {
@@ -27,7 +27,20 @@ export const ReportsView: React.FC = () => {
   }
 
   const downloadReport = () => {
-    window.open(getReportDownloadUrl(currentInvestigation.id), '_blank');
+    try {
+      const md = generateClientMarkdown(currentInvestigation, benchmark);
+      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentInvestigation.repo_name}_archaeology_report.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      window.open(getReportDownloadUrl(currentInvestigation.id), '_blank');
+    }
   };
 
   const openHtmlDossier = () => {
