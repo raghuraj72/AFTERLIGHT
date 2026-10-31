@@ -1,0 +1,884 @@
+{
+  "GHOST_ARCHIVE_DEMO": {
+    "id": "GHOST_ARCHIVE_DEMO",
+    "repo_name": "GHOST_ARCHIVE_DEMO",
+    "repo_path": "C:\\Users\\RAGHURAJ P SINGH\\OneDrive\\Desktop\\AFTERLIGHT\\ghost_archive_demo",
+    "is_demo": true,
+    "analyzed_at": "2026-10-31 17:34:17 UTC",
+    "last_commit_date": "2022-11-05T13:12:00+05:30",
+    "total_files": 11,
+    "total_lines_of_code": 317,
+    "languages": {
+      "Text": 7,
+      "JSON": 166,
+      "Markdown": 7,
+      "Python": 101,
+      "JavaScript": 36
+    },
+    "files_list": [
+      "DEPRECATION_NOTICE.txt",
+      "ground_truth.json",
+      "package.json",
+      "README.md",
+      "requirements.txt",
+      "backend/auth_legacy.py",
+      "backend/pipeline.py",
+      "backend/server.py",
+      "backend/utils.py",
+      "frontend/app.js",
+      "frontend/data_feed.js"
+    ],
+    "findings": [
+      {
+        "id": "GC-01",
+        "file_path": "backend/auth_legacy.py",
+        "line_number": 8,
+        "symbol": "hashlib.md5",
+        "type": "deprecated_crypto",
+        "severity": "high",
+        "evidence": "return hashlib.md5(raw.encode(\"utf-8\")).hexdigest()",
+        "explanation": "Use of cryptographically broken hash function hashlib.md5. Susceptible to collision attacks.",
+        "confidence": 0.98,
+        "recommended_action": "Migrate to hashlib.sha256() or Argon2 / HMAC for authentication tokens."
+      },
+      {
+        "id": "GC-02",
+        "file_path": "backend/auth_legacy.py",
+        "line_number": 14,
+        "symbol": "decrypt_cold_vault_keys",
+        "type": "undocumented_function",
+        "severity": "medium",
+        "evidence": "def decrypt_cold_vault_keys(vault_path: str) -> Optional[bytes]:",
+        "explanation": "Function 'decrypt_cold_vault_keys' lacks a docstring, parameter specification, and contract description.",
+        "confidence": 0.9,
+        "recommended_action": "Document parameter contracts, return types, and expected edge behavior."
+      },
+      {
+        "id": "GC-03",
+        "file_path": "backend/auth_legacy.py",
+        "line_number": 5,
+        "symbol": "FIXME Marker",
+        "type": "todo_marker",
+        "severity": "medium",
+        "evidence": "# FIXME: Deprecated MD5 session hash. Migrate to SHA256 before production deployment.",
+        "explanation": "Unresolved FIXME comment found: '# FIXME: Deprecated MD5 session hash. Migrate to SHA256 before production deployment.'. Indicates incomplete or deferred implementation.",
+        "confidence": 0.99,
+        "recommended_action": "Resolve deferred FIXME task or formalize into project issue tracking."
+      },
+      {
+        "id": "GC-04",
+        "file_path": "backend/pipeline.py",
+        "line_number": 29,
+        "symbol": "legacy_raw_socket_streamer",
+        "type": "undocumented_function",
+        "severity": "medium",
+        "evidence": "def legacy_raw_socket_streamer(port: int = 9099):",
+        "explanation": "Function 'legacy_raw_socket_streamer' lacks a docstring, parameter specification, and contract description.",
+        "confidence": 0.9,
+        "recommended_action": "Document parameter contracts, return types, and expected edge behavior."
+      },
+      {
+        "id": "GC-05",
+        "file_path": "backend/pipeline.py",
+        "line_number": 32,
+        "symbol": "TODO Marker",
+        "type": "todo_marker",
+        "severity": "low",
+        "evidence": "# TODO: remove after validating fast batch buffer integration.",
+        "explanation": "Unresolved TODO comment found: '# TODO: remove after validating fast batch buffer integration.'. Indicates incomplete or deferred implementation.",
+        "confidence": 0.99,
+        "recommended_action": "Resolve deferred TODO task or formalize into project issue tracking."
+      },
+      {
+        "id": "GC-06",
+        "file_path": "backend/utils.py",
+        "line_number": 2,
+        "symbol": "cmath",
+        "type": "unused_import",
+        "severity": "low",
+        "evidence": "import cmath  # UNUSED_IMPORT",
+        "explanation": "Module 'cmath' is imported but never referenced anywhere in this file.",
+        "confidence": 0.95,
+        "recommended_action": "Remove obsolete import 'cmath' to clean namespace and reduce load time."
+      },
+      {
+        "id": "GC-07",
+        "file_path": "backend/utils.py",
+        "line_number": 3,
+        "symbol": "ET",
+        "type": "unused_import",
+        "severity": "low",
+        "evidence": "import xml.etree.ElementTree as ET  # UNUSED_IMPORT",
+        "explanation": "Module 'ET' is imported but never referenced anywhere in this file.",
+        "confidence": 0.95,
+        "recommended_action": "Remove obsolete import 'ET' to clean namespace and reduce load time."
+      },
+      {
+        "id": "GC-08",
+        "file_path": "backend/utils.py",
+        "line_number": 11,
+        "symbol": "calculate_sensor_entropy",
+        "type": "undocumented_function",
+        "severity": "medium",
+        "evidence": "def calculate_sensor_entropy(readings: list[float]) -> float:",
+        "explanation": "Function 'calculate_sensor_entropy' lacks a docstring, parameter specification, and contract description.",
+        "confidence": 0.9,
+        "recommended_action": "Document parameter contracts, return types, and expected edge behavior."
+      },
+      {
+        "id": "GC-09",
+        "file_path": "frontend/app.js",
+        "line_number": 15,
+        "symbol": "TODO Marker",
+        "type": "todo_marker",
+        "severity": "low",
+        "evidence": "// TODO: remove canvas fallback once WebGL feed stabilizes",
+        "explanation": "Unresolved TODO comment found: '// TODO: remove canvas fallback once WebGL feed stabilizes'. Indicates incomplete or deferred implementation.",
+        "confidence": 0.99,
+        "recommended_action": "Resolve deferred TODO task or formalize into project issue tracking."
+      },
+      {
+        "id": "GC-10",
+        "file_path": "backend/auth_legacy.py",
+        "line_number": 14,
+        "symbol": "decrypt_cold_vault_keys",
+        "type": "orphaned_function",
+        "severity": "medium",
+        "evidence": "def decrypt_cold_vault_keys(vault_path: str) -> Optional[bytes]:",
+        "explanation": "Function 'decrypt_cold_vault_keys' is declared in 'backend/auth_legacy.py' but has zero internal callers across the repository.",
+        "confidence": 0.9,
+        "recommended_action": "Confirm if 'decrypt_cold_vault_keys' is intended as an external public API or safe to prune."
+      },
+      {
+        "id": "GC-11",
+        "file_path": "backend/pipeline.py",
+        "line_number": 29,
+        "symbol": "legacy_raw_socket_streamer",
+        "type": "orphaned_function",
+        "severity": "medium",
+        "evidence": "def legacy_raw_socket_streamer(port: int = 9099):",
+        "explanation": "Function 'legacy_raw_socket_streamer' is declared in 'backend/pipeline.py' but has zero internal callers across the repository.",
+        "confidence": 0.9,
+        "recommended_action": "Confirm if 'legacy_raw_socket_streamer' is intended as an external public API or safe to prune."
+      },
+      {
+        "id": "GC-12",
+        "file_path": "backend/utils.py",
+        "line_number": 5,
+        "symbol": "normalize_reading",
+        "type": "orphaned_function",
+        "severity": "medium",
+        "evidence": "def normalize_reading(val: float, min_val: float, max_val: float) -> float:",
+        "explanation": "Function 'normalize_reading' is declared in 'backend/utils.py' but has zero internal callers across the repository.",
+        "confidence": 0.9,
+        "recommended_action": "Confirm if 'normalize_reading' is intended as an external public API or safe to prune."
+      },
+      {
+        "id": "GC-13",
+        "file_path": "backend/server.py",
+        "line_number": 30,
+        "symbol": "get_anomalies",
+        "type": "missing_test",
+        "severity": "high",
+        "evidence": "@app.get(\"/api/v1/telemetry/anomalies\")",
+        "explanation": "Critical anomaly detection endpoint lacks automated unit tests or integration coverage.",
+        "confidence": 0.92,
+        "recommended_action": "Create tests/test_server.py using pytest & TestClient to assert response schemas and edge cases."
+      },
+      {
+        "id": "GC-14",
+        "file_path": "requirements.txt",
+        "line_number": 3,
+        "symbol": "pydantic==1.8.2",
+        "type": "deprecated_dependency",
+        "severity": "medium",
+        "evidence": "pydantic==1.8.2",
+        "explanation": "Pydantic v1.8 is legacy. Modern ecosystem uses Pydantic v2 with Rust core for 5-20x speedup.",
+        "confidence": 0.96,
+        "recommended_action": "Migrate model definitions to Pydantic v2."
+      },
+      {
+        "id": "GC-15",
+        "file_path": "requirements.txt",
+        "line_number": 4,
+        "symbol": "requests==2.22.0",
+        "type": "deprecated_dependency",
+        "severity": "medium",
+        "evidence": "requests==2.22.0",
+        "explanation": "Requests 2.22 is unmaintained and contains deprecated SSL adapter fallbacks.",
+        "confidence": 0.96,
+        "recommended_action": "Upgrade requests to >=2.31.0."
+      },
+      {
+        "id": "GC-16",
+        "file_path": "requirements.txt",
+        "line_number": 6,
+        "symbol": "urllib3==1.25.10",
+        "type": "deprecated_dependency",
+        "severity": "high",
+        "evidence": "urllib3==1.25.10",
+        "explanation": "Outdated urllib3 (<1.26) subject to known CVEs and incompatibility with modern OpenSSL.",
+        "confidence": 0.96,
+        "recommended_action": "Upgrade to urllib3>=2.0.0 or requests>=2.31.0."
+      },
+      {
+        "id": "GC-17",
+        "file_path": "package.json",
+        "line_number": 6,
+        "symbol": "chart.js (^2.9.4)",
+        "type": "deprecated_dependency",
+        "severity": "low",
+        "evidence": "\"chart.js\": \"^2.9.4\",",
+        "explanation": "Chart.js v2 has breaking changes compared to Chart.js v4 with modern ESM packaging.",
+        "confidence": 0.95,
+        "recommended_action": "Upgrade to Chart.js v4 or Recharts/ECharts."
+      },
+      {
+        "id": "GC-18",
+        "file_path": "package.json",
+        "line_number": 8,
+        "symbol": "moment (^2.29.1)",
+        "type": "deprecated_dependency",
+        "severity": "medium",
+        "evidence": "\"moment\": \"^2.29.1\"",
+        "explanation": "Moment.js is in maintenance-only mode. The Moment team recommends against using it in new projects.",
+        "confidence": 0.95,
+        "recommended_action": "Migrate to modern tree-shakeable libraries like date-fns, Luxon, or native Intl API."
+      }
+    ],
+    "commits": [
+      {
+        "hash": "c5ed1f04d840b443f3850f6c38e1b402dca3a2a9",
+        "short_hash": "c5ed1f0",
+        "author": "Sarah Lin",
+        "email": "sarah.lin@aetherstream.dev",
+        "date": "2022-11-05T13:12:00+05:30",
+        "message": "WIP: abandoned refactor to v2 protocol before project decommissioning",
+        "changed_files": [
+          "DEPRECATION_NOTICE.txt"
+        ],
+        "is_architectural_milestone": true,
+        "milestone_reason": "Final Recorded Activity: Last known development modification before abandonment."
+      },
+      {
+        "hash": "43b799304142bf444094a0b240b4f9ff70b33934",
+        "short_hash": "43b7993",
+        "author": "Alex Chen",
+        "email": "alex.chen@aetherstream.dev",
+        "date": "2022-08-19T17:50:00+05:30",
+        "message": "chore(legacy): temporary hotfix bypass for legacy auth; mark TODO for vault removal",
+        "changed_files": [
+          "backend/auth_legacy.py"
+        ],
+        "is_architectural_milestone": true,
+        "milestone_reason": "Security Architecture: Implementation of session vault and authentication primitives."
+      },
+      {
+        "hash": "6486e1a1c44d7338cfec41f3ccfd26c2d2a9e768",
+        "short_hash": "6486e1a",
+        "author": "Sarah Lin",
+        "email": "sarah.lin@aetherstream.dev",
+        "date": "2022-04-03T09:20:00+05:30",
+        "message": "refactor(pipeline): transition to fast batch buffer; deprecate old raw socket streamer",
+        "changed_files": [
+          "backend/pipeline.py"
+        ],
+        "is_architectural_milestone": true,
+        "milestone_reason": "Core Pipeline Refactor: Migration from raw sockets to telemetry batch buffer."
+      },
+      {
+        "hash": "bcecd259658a27ab8d3fc05b9f01b5b89f3672be",
+        "short_hash": "bcecd25",
+        "author": "Dave Miller",
+        "email": "dave.m@aetherstream.dev",
+        "date": "2022-01-10T16:45:00+05:30",
+        "message": "feat(web): add dashboard live-feed visualizer with canvas radar",
+        "changed_files": [
+          "frontend/app.js",
+          "frontend/data_feed.js",
+          "package.json"
+        ],
+        "is_architectural_milestone": true,
+        "milestone_reason": "Interface Expansion: Integration of real-time monitoring visualizer."
+      },
+      {
+        "hash": "c0640988ff08556ff598b2b2c732e0f1b2890608",
+        "short_hash": "c064098",
+        "author": "Alex Chen",
+        "email": "alex.chen@aetherstream.dev",
+        "date": "2021-09-15T11:05:00+05:30",
+        "message": "feat(security): implement session handshake and token vault",
+        "changed_files": [
+          "backend/auth_legacy.py",
+          "backend/server.py"
+        ],
+        "is_architectural_milestone": true,
+        "milestone_reason": "Security Architecture: Implementation of session vault and authentication primitives."
+      },
+      {
+        "hash": "8533af9fecd8de375652353ac222eef9d684cb8a",
+        "short_hash": "8533af9",
+        "author": "Sarah Lin",
+        "email": "sarah.lin@aetherstream.dev",
+        "date": "2021-06-20T14:32:00+05:30",
+        "message": "feat(ingest): add rolling window buffer and anomaly detection heuristic",
+        "changed_files": [
+          "backend/pipeline.py"
+        ],
+        "is_architectural_milestone": false,
+        "milestone_reason": null
+      },
+      {
+        "hash": "38eadad44eacb8d59f87b4296720e032a1ffd956",
+        "short_hash": "38eadad",
+        "author": "Sarah Lin",
+        "email": "sarah.lin@aetherstream.dev",
+        "date": "2021-04-12T10:14:00+05:30",
+        "message": "Init repo: ChronoLog Edge Telemetry Ingestion Core",
+        "changed_files": [],
+        "is_architectural_milestone": true,
+        "milestone_reason": "Genesis Commit: Initial repository scaffolding and architecture creation."
+      }
+    ],
+    "architecture": {
+      "nodes": [
+        {
+          "id": "mod:DEPRECATION_NOTICE.txt",
+          "label": "DEPRECATION_NOTICE.txt",
+          "type": "module",
+          "file_path": "DEPRECATION_NOTICE.txt",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "mod:ground_truth.json",
+          "label": "ground_truth.json",
+          "type": "module",
+          "file_path": "ground_truth.json",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "mod:package.json",
+          "label": "package.json",
+          "type": "module",
+          "file_path": "package.json",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "mod:README.md",
+          "label": "README.md",
+          "type": "module",
+          "file_path": "README.md",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "mod:requirements.txt",
+          "label": "requirements.txt",
+          "type": "module",
+          "file_path": "requirements.txt",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "mod:backend/auth_legacy.py",
+          "label": "auth_legacy.py",
+          "type": "module",
+          "file_path": "backend/auth_legacy.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "fn:backend/auth_legacy.py:compute_legacy_session_digest",
+          "label": "compute_legacy_session_digest()",
+          "type": "function",
+          "file_path": "backend/auth_legacy.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 3
+        },
+        {
+          "id": "fn:backend/auth_legacy.py:verify_station_token",
+          "label": "verify_station_token()",
+          "type": "function",
+          "file_path": "backend/auth_legacy.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 3
+        },
+        {
+          "id": "fn:backend/auth_legacy.py:decrypt_cold_vault_keys",
+          "label": "decrypt_cold_vault_keys()",
+          "type": "function",
+          "file_path": "backend/auth_legacy.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 5
+        },
+        {
+          "id": "mod:backend/pipeline.py",
+          "label": "pipeline.py",
+          "type": "module",
+          "file_path": "backend/pipeline.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "fn:backend/pipeline.py:legacy_raw_socket_streamer",
+          "label": "legacy_raw_socket_streamer()",
+          "type": "function",
+          "file_path": "backend/pipeline.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 10
+        },
+        {
+          "id": "mod:backend/server.py",
+          "label": "server.py",
+          "type": "module",
+          "file_path": "backend/server.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "fn:backend/server.py:health",
+          "label": "health()",
+          "type": "function",
+          "file_path": "backend/server.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 2
+        },
+        {
+          "id": "fn:backend/server.py:ingest_telemetry",
+          "label": "ingest_telemetry()",
+          "type": "function",
+          "file_path": "backend/server.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 6
+        },
+        {
+          "id": "fn:backend/server.py:get_anomalies",
+          "label": "get_anomalies()",
+          "type": "function",
+          "file_path": "backend/server.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 3
+        },
+        {
+          "id": "mod:backend/utils.py",
+          "label": "utils.py",
+          "type": "module",
+          "file_path": "backend/utils.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "fn:backend/utils.py:normalize_reading",
+          "label": "normalize_reading()",
+          "type": "function",
+          "file_path": "backend/utils.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 5
+        },
+        {
+          "id": "fn:backend/utils.py:calculate_sensor_entropy",
+          "label": "calculate_sensor_entropy()",
+          "type": "function",
+          "file_path": "backend/utils.py",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 16
+        },
+        {
+          "id": "mod:frontend/app.js",
+          "label": "app.js",
+          "type": "module",
+          "file_path": "frontend/app.js",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        },
+        {
+          "id": "mod:frontend/data_feed.js",
+          "label": "data_feed.js",
+          "type": "module",
+          "file_path": "frontend/data_feed.js",
+          "ghost_status": false,
+          "ghost_finding_id": null,
+          "loc": 0
+        }
+      ],
+      "edges": [
+        {
+          "source": "mod:backend/auth_legacy.py",
+          "target": "mod:typing.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/auth_legacy.py",
+          "target": "fn:backend/auth_legacy.py:compute_legacy_session_digest",
+          "relationship": "defines"
+        },
+        {
+          "source": "mod:backend/auth_legacy.py",
+          "target": "fn:backend/auth_legacy.py:verify_station_token",
+          "relationship": "defines"
+        },
+        {
+          "source": "mod:backend/auth_legacy.py",
+          "target": "fn:backend/auth_legacy.py:decrypt_cold_vault_keys",
+          "relationship": "defines"
+        },
+        {
+          "source": "mod:backend/pipeline.py",
+          "target": "mod:typing.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/pipeline.py",
+          "target": "mod:typing.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/pipeline.py",
+          "target": "mod:typing.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/pipeline.py",
+          "target": "fn:backend/pipeline.py:legacy_raw_socket_streamer",
+          "relationship": "defines"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:fastapi.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:fastapi.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:fastapi.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:pydantic.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:typing.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:typing.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:typing.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:typing.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:pipeline.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:auth_legacy.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "mod:auth_legacy.py",
+          "relationship": "imports"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "fn:backend/server.py:health",
+          "relationship": "defines"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "fn:backend/server.py:ingest_telemetry",
+          "relationship": "defines"
+        },
+        {
+          "source": "mod:backend/server.py",
+          "target": "fn:backend/server.py:get_anomalies",
+          "relationship": "defines"
+        },
+        {
+          "source": "mod:backend/utils.py",
+          "target": "fn:backend/utils.py:normalize_reading",
+          "relationship": "defines"
+        },
+        {
+          "source": "mod:backend/utils.py",
+          "target": "fn:backend/utils.py:calculate_sensor_entropy",
+          "relationship": "defines"
+        }
+      ]
+    },
+    "health": {
+      "overall_score": 35,
+      "documentation_score": 60,
+      "test_score": 10,
+      "dependency_score": 20,
+      "clean_code_score": 10,
+      "commit_vitality_score": 80,
+      "formula_explanation": "Overall Health = (0.25 \u00d7 DocScore) + (0.20 \u00d7 TestScore) + (0.20 \u00d7 DepScore) + (0.20 \u00d7 CleanScore) + (0.15 \u00d7 VitalityScore)",
+      "inputs_breakdown": {
+        "readme_detected": true,
+        "undocumented_functions_count": 3,
+        "test_files_count": 0,
+        "missing_tests_flagged": 1,
+        "deprecated_dependencies_count": 5,
+        "deprecated_crypto_count": 1,
+        "orphaned_functions_count": 3,
+        "total_commits_evaluated": 7,
+        "distinct_contributors": 3
+      }
+    },
+    "resurrection_plan": [
+      {
+        "id": "RES-01",
+        "category": "critical_discoveries",
+        "title": "Replace Broken Cryptographic Digest: hashlib.md5",
+        "description": "The legacy session digest uses MD5 which is vulnerable to collision attacks. It must be upgraded to SHA-256 or HMAC before running in production.",
+        "supporting_evidence": "backend/auth_legacy.py:8 -> return hashlib.md5(raw.encode(\"utf-8\")).hexdigest()",
+        "priority": "P0",
+        "estimated_complexity": "Low",
+        "expected_benefit": "Guarantees cryptographic integrity of edge station session tokens; blocks collision forgery.",
+        "relevant_files": [
+          "backend/auth_legacy.py"
+        ],
+        "suggested_steps": [
+          "Import hashlib and hmac in auth_legacy.py",
+          "Update compute_legacy_session_digest to use HMAC-SHA256",
+          "Ensure client stations submit updated digest format or provision backward-compatible grace period"
+        ],
+        "diff_preview": "--- backend/auth_legacy.py\n+++ backend/auth_legacy.py\n@@ -6,3 +6,4 @@\n-    return hashlib.md5(raw.encode('utf-8')).hexdigest()\n+    import hmac\n+    return hmac.new(secret_key.encode('utf-8'), device_id.encode('utf-8'), hashlib.sha256).hexdigest()",
+        "status": "pending"
+      },
+      {
+        "id": "RES-02",
+        "category": "immediate_maintenance",
+        "title": "Prune Dead and Unused Import Declarations",
+        "description": "Remove unreferenced standard library and third-party imports (2 occurrences detected).",
+        "supporting_evidence": "cmath in backend/utils.py:2; ET in backend/utils.py:3",
+        "priority": "P2",
+        "estimated_complexity": "Low",
+        "expected_benefit": "Eliminates namespace clutter, avoids memory overhead, and speeds up module import time.",
+        "relevant_files": [
+          "backend/utils.py"
+        ],
+        "suggested_steps": [
+          "Remove 'import cmath' from backend/utils.py",
+          "Remove 'import xml.etree.ElementTree as ET' from backend/utils.py",
+          "Configure ruff or flake8 in CI to prevent unused imports"
+        ],
+        "diff_preview": "--- backend/utils.py\n+++ backend/utils.py\n@@ -2,2 +2,0 @@\n-import cmath\n-import xml.etree.ElementTree as ET\n",
+        "status": "pending"
+      },
+      {
+        "id": "RES-03",
+        "category": "security_dependencies",
+        "title": "Patch Outdated Python Dependencies & CVE Exposures",
+        "description": "Upgrade urllib3, pydantic, and requests to modern secure releases.",
+        "supporting_evidence": "pydantic==1.8.2 (medium); requests==2.22.0 (medium); urllib3==1.25.10 (high)",
+        "priority": "P1",
+        "estimated_complexity": "Medium",
+        "expected_benefit": "Eliminates known SSL/TLS vulnerabilities in urllib3 and leverages Pydantic v2 performance.",
+        "relevant_files": [
+          "requirements.txt"
+        ],
+        "suggested_steps": [
+          "Bump urllib3 to >=2.2.0 in requirements.txt",
+          "Bump pydantic to >=2.7.0 and run migration linter for BaseModel syntax",
+          "Run pip-audit to verify zero remaining CVEs"
+        ],
+        "diff_preview": "--- requirements.txt\n+++ requirements.txt\n@@ -1,6 +1,6 @@\n-fastapi==0.68.0\n-pydantic==1.8.2\n-urllib3==1.25.10\n+fastapi>=0.110.0\n+pydantic>=2.7.0\n+urllib3>=2.2.0\n",
+        "status": "pending"
+      },
+      {
+        "id": "RES-04",
+        "category": "security_dependencies",
+        "title": "Replace Unmaintained Moment.js in Frontend",
+        "description": "Moment.js is officially in maintenance mode and adds excessive bundle bloat.",
+        "supporting_evidence": "package.json: moment ^2.29.1",
+        "priority": "P2",
+        "estimated_complexity": "Low",
+        "expected_benefit": "Reduces frontend bundle size by ~70KB; enables modern tree-shaking.",
+        "relevant_files": [
+          "package.json",
+          "frontend/app.js"
+        ],
+        "suggested_steps": [
+          "Uninstall moment via npm uninstall moment",
+          "Install date-fns or adopt native JavaScript Intl.DateTimeFormat",
+          "Refactor timestamp formatting calls in frontend/app.js"
+        ],
+        "diff_preview": null,
+        "status": "pending"
+      },
+      {
+        "id": "RES-05",
+        "category": "missing_tests",
+        "title": "Implement Automated Test Harness for Anomaly Pipeline",
+        "description": "Create end-to-end unit and integration tests covering the ingestion buffer and threshold calculations.",
+        "supporting_evidence": "Zero automated test files detected in repository; core API routes are unverified.",
+        "priority": "P0",
+        "estimated_complexity": "Medium",
+        "expected_benefit": "Prevents regression bugs when refactoring telemetry heuristics or updating dependencies.",
+        "relevant_files": [
+          "backend/server.py",
+          "backend/pipeline.py",
+          "tests/test_server.py"
+        ],
+        "suggested_steps": [
+          "Create tests directory and install pytest, httpx",
+          "Write tests/test_server.py testing /health and /api/v1/telemetry/ingest",
+          "Write tests/test_pipeline.py testing rolling window standard deviation thresholds"
+        ],
+        "diff_preview": "--- /dev/null\n+++ tests/test_server.py\n@@ -0,0 +1,15 @@\n+from fastapi.testclient import TestClient\n+from backend.server import app\n+\n+client = TestClient(app)\n+\n+def test_anomaly_endpoint():\n+    res = client.get('/api/v1/telemetry/anomalies')\n+    assert res.status_code == 200\n+    assert 'anomalies' in res.json()",
+        "status": "pending"
+      },
+      {
+        "id": "RES-06",
+        "category": "documentation_recovery",
+        "title": "Recover Missing API Docstrings (3 Functions)",
+        "description": "Generate type specifications and docstrings for undocumented internal functions.",
+        "supporting_evidence": "Undocumented symbols: decrypt_cold_vault_keys() in backend/auth_legacy.py, legacy_raw_socket_streamer() in backend/pipeline.py, calculate_sensor_entropy() in backend/utils.py",
+        "priority": "P1",
+        "estimated_complexity": "Low",
+        "expected_benefit": "Allows new maintainers to understand mathematical parameters, edge states, and algorithm expectations.",
+        "relevant_files": [
+          "backend/auth_legacy.py",
+          "backend/utils.py",
+          "backend/pipeline.py"
+        ],
+        "suggested_steps": [
+          "Add Google or Sphinx style docstrings to calculate_sensor_entropy and decrypt_cold_vault_keys",
+          "Annotate parameter type hints and error conditions",
+          "Generate automated OpenAPI schema docs via FastAPI"
+        ],
+        "diff_preview": "--- backend/utils.py\n+++ backend/utils.py\n@@ -12,3 +12,8 @@\n def calculate_sensor_entropy(readings: list[float]) -> float:\n+    \"\"\"Calculates Shannon entropy across binned float telemetry readings.\n+    \n+    Used for measuring jitter randomness and signal noise.\n+    \"\"\"",
+        "status": "pending"
+      },
+      {
+        "id": "RES-07",
+        "category": "architecture_improvements",
+        "title": "Prune Orphaned Legacy Functions and Streamers",
+        "description": "Remove dead socket streamer left behind from the April 2022 protocol refactor.",
+        "supporting_evidence": "Orphaned symbols with 0 callers: decrypt_cold_vault_keys() in backend/auth_legacy.py, legacy_raw_socket_streamer() in backend/pipeline.py, normalize_reading() in backend/utils.py",
+        "priority": "P2",
+        "estimated_complexity": "Low",
+        "expected_benefit": "Prevents confusion about active networking protocols and reduces maintenance surface area.",
+        "relevant_files": [
+          "backend/auth_legacy.py",
+          "backend/utils.py",
+          "backend/pipeline.py"
+        ],
+        "suggested_steps": [
+          "Verify absence of external socket consumers",
+          "Delete legacy_raw_socket_streamer from backend/pipeline.py",
+          "Clean up any residual socket imports or configuration references"
+        ],
+        "diff_preview": "--- backend/pipeline.py\n+++ backend/pipeline.py\n@@ -30,4 +30,0 @@\n-def legacy_raw_socket_streamer(port: int = 9099):\n-    pass\n",
+        "status": "pending"
+      },
+      {
+        "id": "RES-08",
+        "category": "long_term_modernization",
+        "title": "Migrate to Async Streaming & Containerize for Edge Kubernetes",
+        "description": "Transition FastAPI endpoints to async stream generators and build a lightweight distroless Docker image.",
+        "supporting_evidence": "Commit c5ed1f0 left an incomplete WIP refactor before project decommissioning.",
+        "priority": "P3",
+        "estimated_complexity": "High",
+        "expected_benefit": "Enables high-throughput sensor telemetry (10k+ msgs/sec) with minimal CPU and memory footprints.",
+        "relevant_files": [
+          "Dockerfile",
+          "backend/server.py"
+        ],
+        "suggested_steps": [
+          "Refactor TelemetryWindowBuffer to use asyncio.Queue",
+          "Introduce WebSocket endpoint /api/v1/telemetry/ws for live browser streaming",
+          "Create Dockerfile with multi-stage python:3.11-slim builder"
+        ],
+        "diff_preview": null,
+        "status": "pending"
+      }
+    ],
+    "missions": [
+      {
+        "id": "GH-01",
+        "title": "The Mystery of the Broken Hash",
+        "difficulty": "Novice",
+        "description": "A cryptographic relic from the past remains active in the authentication pipeline. Investigate the security vulnerability and trace the file where it resides.",
+        "clue": "Inspect backend/auth_legacy.py for hash functions commonly broken by collision attacks (MD5/SHA1).",
+        "target_finding_id": "GC-01",
+        "completed": false,
+        "badge": "Cryptographic Sleuth"
+      },
+      {
+        "id": "GH-02",
+        "title": "The Forgotten Socket Streamer",
+        "difficulty": "Adept",
+        "description": "During a historical refactor, an entire raw socket function was orphaned. Find the abandoned function that has zero remaining callers.",
+        "clue": "Search pipeline.py for functions declared with 'def legacy_' that are never invoked by server.py.",
+        "target_finding_id": "GC-10",
+        "completed": false,
+        "badge": "Architecture Detective"
+      },
+      {
+        "id": "GH-03",
+        "title": "The Vulnerable Dependency Phantom",
+        "difficulty": "Master",
+        "description": "A package in requirements.txt is severely outdated and exposes the application to TLS vulnerabilities.",
+        "clue": "Look for a major HTTP transport library pinned to version 1.25.x.",
+        "target_finding_id": "GC-16",
+        "completed": false,
+        "badge": "Vulnerability Exorcist"
+      },
+      {
+        "id": "GH-04",
+        "title": "The Unshielded Anomaly Heuristic",
+        "difficulty": "Adept",
+        "description": "A critical API route computes statistical anomalies for weather stations without a single automated unit test.",
+        "clue": "Inspect server.py endpoints for missing test harnesses in tests/.",
+        "target_finding_id": "GC-13",
+        "completed": false,
+        "badge": "Guardian of Code"
+      }
+    ],
+    "offline_mode": true,
+    "active_ai_model": "Gemma 2B / Local Ollama (Grounded)"
+  }
+}

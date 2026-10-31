@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  afterlight:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - GEMMA_MODEL=gemma2:2b
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-relic-dark text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-relic-cyan selection:text-black;
+  }
+}
+
+/* Custom glowing cyber scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d1017;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #242b3d;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #06b6d4;
+}
+
+.terminal-glow {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+}
+
+.gold-glow {
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.7);
+}
+
+.circuit-pattern {
+  background-image: radial-gradient(rgba(36, 43, 61, 0.4) 1px, transparent 0);
+  background-size: 24px 24px;
+}
