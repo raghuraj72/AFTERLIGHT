@@ -3,7 +3,7 @@ import shutil
 import time
 import uuid
 import zipfile
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
@@ -20,10 +20,11 @@ from .core.git_archaeology import reconstruct_git_history
 from .core.health_scorer import calculate_repository_health
 from .core.revival_engine import generate_resurrection_plan
 from .core.missions import generate_ghost_hunt_missions
+from .core.hypothesis_engine import build_hypothesis_timeline
 from .core.rag_engine import chunk_repository, retrieve_evidence
 from .core.gemma_service import answer_repository_question, list_available_ollama_models
 from .core.evaluator import run_synthetic_benchmark
-from .core.report_generator import generate_markdown_report
+from .core.report_generator import generate_markdown_report, generate_html_report
 from .storage.repository_store import (
     save_investigation, get_investigation, list_investigations,
     update_resurrection_status
@@ -43,6 +44,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+def ensure_demo_repo_initialized():
+    git_dir = os.path.join(settings.DEMO_REPO_PATH, ".git")
+    if not os.path.exists(git_dir):
+        try:
+            import sys
+            scripts_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "scripts"))
+            if scripts_dir not in sys.path:
+                sys.path.insert(0, scripts_dir)
+            from setup_demo_repo import create_demo_repository
+            create_demo_repository()
+        except Exception as e:
+            print(f"Notice: Demo repository git history setup: {e}")
 
 def run_investigation_pipeline(repo_path: str, repo_name: str, is_demo: bool = False) -> Tuple[InvestigationResult, Dict[str, Any]]:
     start_time = time.time()
@@ -74,6 +89,9 @@ def run_investigation_pipeline(repo_path: str, repo_name: str, is_demo: bool = F
     # 7. Ghost Hunt Missions
     missions = generate_ghost_hunt_missions(all_findings)
 
+    # 8. Hypothesis Timeline (Observed Facts vs Model Hypotheses)
+    hypothesis_timeline = build_hypothesis_timeline(repo_name, commits, all_findings, files_list)
+
     duration_ms = (time.time() - start_time) * 1000
 
     inv_id = "GHOST_ARCHIVE_DEMO" if is_demo else str(uuid.uuid4())[:8]
@@ -95,14 +113,15 @@ def run_investigation_pipeline(repo_path: str, repo_name: str, is_demo: bool = F
         health=health,
         resurrection_plan=resurrection_plan,
         missions=missions,
+        hypothesis_timeline=hypothesis_timeline,
         offline_mode=True,
-        active_ai_model="Gemma 2B / Local Ollama (Grounded)"
+        active_ai_model="Gemma 2B (Local Ollama) & Deterministic Fallback"
     )
 
-    # 8. Save
+    # 9. Save
     save_investigation(result)
 
-    # 9. Synthetic Benchmark if ground truth exists
+    # 10. Synthetic Benchmark if ground truth exists
     benchmark = run_synthetic_benchmark(repo_path, all_findings, duration_ms)
 
     return result, benchmark
@@ -123,8 +142,10 @@ async def health_check():
 async def investigate_demo():
     """Runs investigation pipeline on preloaded GHOST_ARCHIVE_DEMO repository."""
     demo_path = settings.DEMO_REPO_PATH
-    if not os.path.exists(demo_path):
-        raise HTTPException(status_code=404, detail="Demo repository not found. Run scripts/setup_demo_repo.py first.")
+    git_dir = os.path.join(demo_path, ".git")
+    if not os.path.exists(git_dir):
+        from scripts.setup_demo_repo import create_demo_repository
+        create_demo_repository()
     
     result, benchmark = run_investigation_pipeline(demo_path, "GHOST_ARCHIVE_DEMO", is_demo=True)
     return {
@@ -221,9 +242,9 @@ async def ask_ai_question(request: AskAiRequest):
     # 2. Retrieve evidence
     source_citations, commit_citations = retrieve_evidence(request.question, chunks, inv.commits)
 
-    # 3. Call Gemma / Grounded Reasoning
+    # 3. Call Gemma / Grounded Reasoning with server-side citation validation
     response = await answer_repository_question(
-        request.question, source_citations, commit_citations, inv.repo_name
+        request.question, source_citations, commit_citations, inv.repo_name, repo_path=inv.repo_path
     )
     return response
 
@@ -250,6 +271,16 @@ async def get_report_markdown(inv_id: str):
     benchmark = run_synthetic_benchmark(inv.repo_path, inv.findings, 42.5)
     md_content = generate_markdown_report(inv, benchmark)
     return PlainTextResponse(md_content, media_type="text/markdown")
+
+@app.get("/api/investigations/{inv_id}/report/html")
+async def get_report_html(inv_id: str):
+    inv = get_investigation(inv_id)
+    if not inv:
+        raise HTTPException(status_code=404, detail="Investigation not found.")
+    benchmark = run_synthetic_benchmark(inv.repo_path, inv.findings, 42.5)
+    html_content = generate_html_report(inv, benchmark)
+    from fastapi.responses import HTMLResponse
+    return HTMLResponse(content=html_content)
 
 @app.get("/api/files/content")
 async def get_file_content(inv_id: str, file_path: str):

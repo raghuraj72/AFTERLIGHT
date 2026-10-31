@@ -4,6 +4,7 @@ export interface SourceCitation {
   line_end?: number;
   snippet?: string;
   explanation?: string;
+  is_verified?: boolean;
 }
 
 export interface CommitCitation {
@@ -12,18 +13,24 @@ export interface CommitCitation {
   date: string;
   message: string;
   relevance?: string;
+  is_verified?: boolean;
 }
 
 export interface GhostCodeFinding {
   id: string;
   file_path: string;
   line_number?: number;
+  line_start?: number;
+  line_end?: number;
   symbol: string;
   type: 'deprecated_crypto' | 'orphaned_function' | 'undocumented_function' | 'unused_import' | 'missing_test' | 'todo_marker' | 'deprecated_dependency' | string;
+  evidence_type: 'source_code' | 'git_history' | 'dependency_manifest' | 'model_hypothesis' | string;
   severity: 'critical' | 'high' | 'medium' | 'low';
   evidence: string;
   explanation: string;
   confidence: number;
+  confidence_rationale?: string;
+  limitations?: string;
   recommended_action: string;
 }
 
@@ -97,6 +104,17 @@ export interface GhostHuntMission {
   badge: string;
 }
 
+export interface HypothesisItem {
+  id: string;
+  epoch: string;
+  observed_fact: string;
+  inferred_hypothesis: string;
+  source_files: string[];
+  commit_hashes: string[];
+  uncertainty_notes: string;
+  confidence: number;
+}
+
 export interface AiAnswerResponse {
   question: string;
   answer: string;
@@ -107,6 +125,11 @@ export interface AiAnswerResponse {
   commit_citations: CommitCitation[];
   uncertainty_notes?: string;
   model_used: string;
+  inference_source: 'gemma_ollama' | 'deterministic_ast_fallback' | string;
+  model_name: string;
+  is_generative: boolean;
+  grounding_status: 'verified' | 'partial' | 'unverified' | string;
+  unsupported_claims?: string[];
 }
 
 export interface InvestigationResult {
@@ -126,6 +149,7 @@ export interface InvestigationResult {
   health: HealthScoreBreakdown;
   resurrection_plan: ResurrectionItem[];
   missions: GhostHuntMission[];
+  hypothesis_timeline: HypothesisItem[];
   offline_mode: boolean;
   active_ai_model: string;
 }

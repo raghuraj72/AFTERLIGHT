@@ -1,0 +1,106 @@
+{
+  "repository_name": "GHOST_ARCHIVE_DEMO",
+  "expected_purpose": "Edge IoT atmospheric telemetry aggregator and anomaly detection buffer for weather stations",
+  "expected_findings": [
+    {
+      "id": "GT-01",
+      "file": "backend/auth_legacy.py",
+      "type": "deprecated_crypto",
+      "symbol": "compute_legacy_session_digest",
+      "line_hint": 6,
+      "evidence": "hashlib.md5",
+      "severity": "high",
+      "explanation": "Uses insecure MD5 hashing for session verification"
+    },
+    {
+      "id": "GT-02",
+      "file": "backend/auth_legacy.py",
+      "type": "undocumented_function",
+      "symbol": "decrypt_cold_vault_keys",
+      "line_hint": 14,
+      "evidence": "def decrypt_cold_vault_keys",
+      "severity": "medium",
+      "explanation": "Orphaned vault key recovery function with no docstring and zero call sites"
+    },
+    {
+      "id": "GT-03",
+      "file": "backend/pipeline.py",
+      "type": "orphaned_function",
+      "symbol": "legacy_raw_socket_streamer",
+      "line_hint": 30,
+      "evidence": "def legacy_raw_socket_streamer",
+      "severity": "medium",
+      "explanation": "Deprecated raw socket streaming function never called by FastAPI server"
+    },
+    {
+      "id": "GT-04",
+      "file": "backend/utils.py",
+      "type": "unused_import",
+      "symbol": "cmath",
+      "line_hint": 2,
+      "evidence": "import cmath",
+      "severity": "low",
+      "explanation": "Imported library cmath is never referenced in file"
+    },
+    {
+      "id": "GT-05",
+      "file": "backend/utils.py",
+      "type": "unused_import",
+      "symbol": "xml.etree.ElementTree",
+      "line_hint": 3,
+      "evidence": "import xml.etree.ElementTree as ET",
+      "severity": "low",
+      "explanation": "Imported library xml.etree.ElementTree is never referenced in file"
+    },
+    {
+      "id": "GT-06",
+      "file": "backend/utils.py",
+      "type": "undocumented_function",
+      "symbol": "calculate_sensor_entropy",
+      "line_hint": 12,
+      "evidence": "def calculate_sensor_entropy",
+      "severity": "medium",
+      "explanation": "Critical calculation function missing docstring, type bounds, and test cases"
+    },
+    {
+      "id": "GT-07",
+      "file": "backend/server.py",
+      "type": "missing_test",
+      "symbol": "get_anomalies",
+      "line_hint": 30,
+      "evidence": "@app.get(\"/api/v1/telemetry/anomalies\")",
+      "severity": "high",
+      "explanation": "Core anomaly API endpoint has no corresponding automated test coverage"
+    },
+    {
+      "id": "GT-08",
+      "file": "frontend/app.js",
+      "type": "todo_marker",
+      "symbol": "renderObsoleteRadar",
+      "line_hint": 15,
+      "evidence": "TODO: remove canvas fallback once WebGL feed stabilizes",
+      "severity": "low",
+      "explanation": "Unresolved TODO marker on legacy canvas renderer"
+    },
+    {
+      "id": "GT-09",
+      "file": "requirements.txt",
+      "type": "deprecated_dependency",
+      "symbol": "urllib3==1.25.10",
+      "line_hint": 6,
+      "evidence": "urllib3==1.25.10",
+      "severity": "high",
+      "explanation": "Severely outdated urllib3 version with known CVE vulnerabilities"
+    },
+    {
+      "id": "GT-10",
+      "file": "package.json",
+      "type": "deprecated_dependency",
+      "symbol": "moment",
+      "line_hint": 7,
+      "evidence": "moment: ^2.29.1",
+      "severity": "medium",
+      "explanation": "Moment.js is in maintenance mode and should be migrated to date-fns or native Intl"
+    }
+  ]
+}

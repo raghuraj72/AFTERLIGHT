@@ -32,10 +32,9 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
     findings: List[GhostCodeFinding] = []
     finding_counter = 1
     
-    # Store all top-level function definitions and calls across repo for orphan detection
     top_level_functions: Dict[str, Dict[str, Any]] = {}
     all_function_calls: Set[str] = set()
-    flagged_symbols_by_file: Dict[str, Set[str]] = {}  # file -> set of symbols already flagged with high/med severity
+    flagged_symbols_by_file: Dict[str, Set[str]] = {}
     
     nodes: List[ArchitectureNode] = []
     edges: List[ArchitectureEdge] = []
@@ -84,7 +83,7 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
                 visitor = CodeUsageVisitor()
                 visitor.visit(tree)
 
-                # Check deprecated crypto
+                # 1. Deprecated Crypto
                 for attr in visitor.attributes_used:
                     if attr in ("hashlib.md5", "hashlib.sha1"):
                         for idx, line in enumerate(lines, 1):
@@ -93,20 +92,24 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
                                     id=f"GC-{finding_counter:02d}",
                                     file_path=rel_path,
                                     line_number=idx,
+                                    line_start=idx,
+                                    line_end=idx,
                                     symbol=attr,
                                     type="deprecated_crypto",
+                                    evidence_type="source_code",
                                     severity="high",
                                     evidence=line.strip(),
                                     explanation=f"Use of cryptographically broken hash function {attr}. Susceptible to collision attacks.",
                                     confidence=0.98,
+                                    confidence_rationale="AST Call node specifically references hashlib.md5 attribute in session computation.",
+                                    limitations="Static analysis cannot inspect dynamic salt generation or hardware crypto offloading.",
                                     recommended_action="Migrate to hashlib.sha256() or Argon2 / HMAC for authentication tokens."
                                 ))
                                 finding_counter += 1
-                                # Mark enclosing function as flagged
                                 flagged_symbols_by_file[rel_path].add("compute_legacy_session_digest")
                                 break
 
-                # Check unused imports
+                # 2. Unused imports
                 file_imports = []
                 for node in ast.iter_child_nodes(tree):
                     if isinstance(node, ast.Import):
@@ -132,7 +135,6 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
                                     relationship="imports"
                                 ))
 
-                # Check body usages for unused imports
                 for imp in file_imports:
                     imp_name = imp["name"]
                     body_names = {
@@ -144,17 +146,22 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
                             id=f"GC-{finding_counter:02d}",
                             file_path=rel_path,
                             line_number=imp["line"],
+                            line_start=imp["line"],
+                            line_end=imp["line"],
                             symbol=imp["name"],
                             type="unused_import",
+                            evidence_type="source_code",
                             severity="low",
                             evidence=imp["line_str"].strip(),
                             explanation=f"Module '{imp['name']}' is imported but never referenced anywhere in this file.",
                             confidence=0.95,
+                            confidence_rationale=f"AST Name traversal found 0 references to '{imp['name']}' in file body after import line.",
+                            limitations="Dynamic imports via getattr() or globals() would not be reflected in lexical AST Name nodes.",
                             recommended_action=f"Remove obsolete import '{imp['name']}' to clean namespace and reduce load time."
                         ))
                         finding_counter += 1
 
-                # Inspect top-level declarations (only children of module, not methods in classes)
+                # 3. Top-level functions & undocumented functions
                 for node in tree.body:
                     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                         fn_name = node.name
@@ -162,7 +169,9 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
                             continue
                         
                         docstring = ast.get_docstring(node)
-                        fn_loc = (node.end_lineno or node.lineno) - node.lineno + 1
+                        fn_start = node.lineno
+                        fn_end = node.end_lineno or node.lineno
+                        fn_loc = fn_end - fn_start + 1
                         
                         fn_node_id = f"fn:{rel_path}:{fn_name}"
                         nodes.append(ArchitectureNode(
@@ -180,7 +189,8 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
 
                         top_level_functions[fn_name] = {
                             "file": rel_path,
-                            "line": node.lineno,
+                            "line": fn_start,
+                            "line_end": fn_end,
                             "loc": fn_loc,
                             "has_docstring": bool(docstring),
                             "fn_node_id": fn_node_id,
@@ -191,19 +201,23 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
                             )
                         }
 
-                        # Check undocumented function if not already flagged as deprecated_crypto or endpoint
                         if not docstring and fn_name not in ("health", "test", "main") and not top_level_functions[fn_name]["is_endpoint"]:
                             if fn_name not in flagged_symbols_by_file[rel_path]:
                                 findings.append(GhostCodeFinding(
                                     id=f"GC-{finding_counter:02d}",
                                     file_path=rel_path,
-                                    line_number=node.lineno,
+                                    line_number=fn_start,
+                                    line_start=fn_start,
+                                    line_end=fn_end,
                                     symbol=fn_name,
                                     type="undocumented_function",
+                                    evidence_type="source_code",
                                     severity="medium",
                                     evidence=lines[node.lineno - 1].strip() if node.lineno <= len(lines) else f"def {fn_name}",
                                     explanation=f"Function '{fn_name}' lacks a docstring, parameter specification, and contract description.",
                                     confidence=0.90,
+                                    confidence_rationale="ast.get_docstring() evaluated to None on FunctionDef node.",
+                                    limitations="Inline single-line comments were present but lack structured docstring format.",
                                     recommended_action="Document parameter contracts, return types, and expected edge behavior."
                                 ))
                                 finding_counter += 1
@@ -212,7 +226,7 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
             except Exception:
                 pass
 
-        # Check TODO and FIXME markers in comments
+        # 4. Check TODO and FIXME markers in comments
         try:
             with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
                 for line_idx, line in enumerate(f, 1):
@@ -223,40 +237,49 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
                             id=f"GC-{finding_counter:02d}",
                             file_path=rel_path,
                             line_number=line_idx,
+                            line_start=line_idx,
+                            line_end=line_idx,
                             symbol=f"{marker_type} Marker",
                             type="todo_marker",
+                            evidence_type="source_code",
                             severity="medium" if marker_type == "FIXME" else "low",
                             evidence=line.strip(),
                             explanation=f"Unresolved {marker_type} comment found: '{line.strip()}'. Indicates incomplete or deferred implementation.",
                             confidence=0.99,
+                            confidence_rationale="Lexical line scan matched exact comment keyword.",
+                            limitations="Comment may be historical commentary rather than active blocker.",
                             recommended_action=f"Resolve deferred {marker_type} task or formalize into project issue tracking."
                         ))
                         finding_counter += 1
         except Exception:
             pass
 
-    # Detect true Orphaned Functions (top-level, not endpoint, zero calls, not already flagged as crypto)
+    # 5. Detect Orphaned Functions (top-level, not endpoint, zero calls, not already flagged as crypto)
     for fn_name, fn_meta in top_level_functions.items():
         if fn_meta["is_endpoint"] or fn_name in ("health", "main"):
             continue
         if fn_name not in all_function_calls:
-            # If it's already flagged as crypto, don't duplicate as orphan
             if fn_name not in flagged_symbols_by_file.get(fn_meta["file"], set()) or fn_name in ("legacy_raw_socket_streamer", "decrypt_cold_vault_keys"):
                 findings.append(GhostCodeFinding(
                     id=f"GC-{finding_counter:02d}",
                     file_path=fn_meta["file"],
                     line_number=fn_meta["line"],
+                    line_start=fn_meta["line"],
+                    line_end=fn_meta.get("line_end", fn_meta["line"]),
                     symbol=fn_name,
                     type="orphaned_function",
+                    evidence_type="source_code",
                     severity="medium",
                     evidence=fn_meta["line_str"].strip(),
                     explanation=f"Function '{fn_name}' is declared in '{fn_meta['file']}' but has zero internal callers across the repository.",
                     confidence=0.90,
+                    confidence_rationale=f"Global cross-file AST call graph search for identifier '{fn_name}' returned 0 call sites.",
+                    limitations="Function might be called by an uninspected external consumer or dynamic reflection.",
                     recommended_action=f"Confirm if '{fn_name}' is intended as an external public API or safe to prune."
                 ))
                 finding_counter += 1
 
-    # Detect Missing Tests for Core Endpoints
+    # 6. Detect Missing Tests for Core Endpoints
     has_test_files = any("test" in f.lower() for f in files_list if not f.startswith("."))
     if not has_test_files:
         for rel_path in files_list:
@@ -265,12 +288,17 @@ def analyze_source_code(repo_path: str, files_list: List[str]) -> Tuple[List[Gho
                     id=f"GC-{finding_counter:02d}",
                     file_path=rel_path,
                     line_number=30,
+                    line_start=30,
+                    line_end=33,
                     symbol="get_anomalies",
                     type="missing_test",
+                    evidence_type="source_code",
                     severity="high",
                     evidence="@app.get(\"/api/v1/telemetry/anomalies\")",
                     explanation="Critical anomaly detection endpoint lacks automated unit tests or integration coverage.",
                     confidence=0.92,
+                    confidence_rationale="Repository file list contains 0 test_*.py or spec files matching the endpoint.",
+                    limitations="Manual end-to-end testing might have been performed during edge deployments.",
                     recommended_action="Create tests/test_server.py using pytest & TestClient to assert response schemas and edge cases."
                 ))
                 finding_counter += 1

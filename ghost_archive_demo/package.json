@@ -1,0 +1,10 @@
+{
+  "name": "chronolog-edge-visualizer",
+  "version": "0.2.0",
+  "description": "Live canvas feed and radar monitor for atmospheric sensors",
+  "dependencies": {
+    "chart.js": "^2.9.4",
+    "axios": "^0.21.1",
+    "moment": "^2.29.1"
+  }
+}

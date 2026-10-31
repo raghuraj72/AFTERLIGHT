@@ -4,20 +4,19 @@
     "repo_name": "GHOST_ARCHIVE_DEMO",
     "repo_path": "C:\\Users\\RAGHURAJ P SINGH\\OneDrive\\Desktop\\AFTERLIGHT\\ghost_archive_demo",
     "is_demo": true,
-    "analyzed_at": "2026-10-31 17:34:17 UTC",
+    "analyzed_at": "2026-10-31 18:29:20 UTC",
     "last_commit_date": "2022-11-05T13:12:00+05:30",
-    "total_files": 11,
-    "total_lines_of_code": 317,
+    "total_files": 10,
+    "total_lines_of_code": 161,
     "languages": {
       "Text": 7,
-      "JSON": 166,
+      "JSON": 10,
       "Markdown": 7,
       "Python": 101,
       "JavaScript": 36
     },
     "files_list": [
       "DEPRECATION_NOTICE.txt",
-      "ground_truth.json",
       "package.json",
       "README.md",
       "requirements.txt",
@@ -33,216 +32,306 @@
         "id": "GC-01",
         "file_path": "backend/auth_legacy.py",
         "line_number": 8,
+        "line_start": 8,
+        "line_end": 8,
         "symbol": "hashlib.md5",
         "type": "deprecated_crypto",
+        "evidence_type": "source_code",
         "severity": "high",
         "evidence": "return hashlib.md5(raw.encode(\"utf-8\")).hexdigest()",
         "explanation": "Use of cryptographically broken hash function hashlib.md5. Susceptible to collision attacks.",
         "confidence": 0.98,
+        "confidence_rationale": "AST Call node specifically references hashlib.md5 attribute in session computation.",
+        "limitations": "Static analysis cannot inspect dynamic salt generation or hardware crypto offloading.",
         "recommended_action": "Migrate to hashlib.sha256() or Argon2 / HMAC for authentication tokens."
       },
       {
         "id": "GC-02",
         "file_path": "backend/auth_legacy.py",
         "line_number": 14,
+        "line_start": 14,
+        "line_end": 18,
         "symbol": "decrypt_cold_vault_keys",
         "type": "undocumented_function",
+        "evidence_type": "source_code",
         "severity": "medium",
         "evidence": "def decrypt_cold_vault_keys(vault_path: str) -> Optional[bytes]:",
         "explanation": "Function 'decrypt_cold_vault_keys' lacks a docstring, parameter specification, and contract description.",
         "confidence": 0.9,
+        "confidence_rationale": "ast.get_docstring() evaluated to None on FunctionDef node.",
+        "limitations": "Inline single-line comments were present but lack structured docstring format.",
         "recommended_action": "Document parameter contracts, return types, and expected edge behavior."
       },
       {
         "id": "GC-03",
         "file_path": "backend/auth_legacy.py",
         "line_number": 5,
+        "line_start": 5,
+        "line_end": 5,
         "symbol": "FIXME Marker",
         "type": "todo_marker",
+        "evidence_type": "source_code",
         "severity": "medium",
         "evidence": "# FIXME: Deprecated MD5 session hash. Migrate to SHA256 before production deployment.",
         "explanation": "Unresolved FIXME comment found: '# FIXME: Deprecated MD5 session hash. Migrate to SHA256 before production deployment.'. Indicates incomplete or deferred implementation.",
         "confidence": 0.99,
+        "confidence_rationale": "Lexical line scan matched exact comment keyword.",
+        "limitations": "Comment may be historical commentary rather than active blocker.",
         "recommended_action": "Resolve deferred FIXME task or formalize into project issue tracking."
       },
       {
         "id": "GC-04",
         "file_path": "backend/pipeline.py",
         "line_number": 29,
+        "line_start": 29,
+        "line_end": 38,
         "symbol": "legacy_raw_socket_streamer",
         "type": "undocumented_function",
+        "evidence_type": "source_code",
         "severity": "medium",
         "evidence": "def legacy_raw_socket_streamer(port: int = 9099):",
         "explanation": "Function 'legacy_raw_socket_streamer' lacks a docstring, parameter specification, and contract description.",
         "confidence": 0.9,
+        "confidence_rationale": "ast.get_docstring() evaluated to None on FunctionDef node.",
+        "limitations": "Inline single-line comments were present but lack structured docstring format.",
         "recommended_action": "Document parameter contracts, return types, and expected edge behavior."
       },
       {
         "id": "GC-05",
         "file_path": "backend/pipeline.py",
         "line_number": 32,
+        "line_start": 32,
+        "line_end": 32,
         "symbol": "TODO Marker",
         "type": "todo_marker",
+        "evidence_type": "source_code",
         "severity": "low",
         "evidence": "# TODO: remove after validating fast batch buffer integration.",
         "explanation": "Unresolved TODO comment found: '# TODO: remove after validating fast batch buffer integration.'. Indicates incomplete or deferred implementation.",
         "confidence": 0.99,
+        "confidence_rationale": "Lexical line scan matched exact comment keyword.",
+        "limitations": "Comment may be historical commentary rather than active blocker.",
         "recommended_action": "Resolve deferred TODO task or formalize into project issue tracking."
       },
       {
         "id": "GC-06",
         "file_path": "backend/utils.py",
         "line_number": 2,
+        "line_start": 2,
+        "line_end": 2,
         "symbol": "cmath",
         "type": "unused_import",
+        "evidence_type": "source_code",
         "severity": "low",
         "evidence": "import cmath  # UNUSED_IMPORT",
         "explanation": "Module 'cmath' is imported but never referenced anywhere in this file.",
         "confidence": 0.95,
+        "confidence_rationale": "AST Name traversal found 0 references to 'cmath' in file body after import line.",
+        "limitations": "Dynamic imports via getattr() or globals() would not be reflected in lexical AST Name nodes.",
         "recommended_action": "Remove obsolete import 'cmath' to clean namespace and reduce load time."
       },
       {
         "id": "GC-07",
         "file_path": "backend/utils.py",
         "line_number": 3,
+        "line_start": 3,
+        "line_end": 3,
         "symbol": "ET",
         "type": "unused_import",
+        "evidence_type": "source_code",
         "severity": "low",
         "evidence": "import xml.etree.ElementTree as ET  # UNUSED_IMPORT",
         "explanation": "Module 'ET' is imported but never referenced anywhere in this file.",
         "confidence": 0.95,
+        "confidence_rationale": "AST Name traversal found 0 references to 'ET' in file body after import line.",
+        "limitations": "Dynamic imports via getattr() or globals() would not be reflected in lexical AST Name nodes.",
         "recommended_action": "Remove obsolete import 'ET' to clean namespace and reduce load time."
       },
       {
         "id": "GC-08",
         "file_path": "backend/utils.py",
         "line_number": 11,
+        "line_start": 11,
+        "line_end": 26,
         "symbol": "calculate_sensor_entropy",
         "type": "undocumented_function",
+        "evidence_type": "source_code",
         "severity": "medium",
         "evidence": "def calculate_sensor_entropy(readings: list[float]) -> float:",
         "explanation": "Function 'calculate_sensor_entropy' lacks a docstring, parameter specification, and contract description.",
         "confidence": 0.9,
+        "confidence_rationale": "ast.get_docstring() evaluated to None on FunctionDef node.",
+        "limitations": "Inline single-line comments were present but lack structured docstring format.",
         "recommended_action": "Document parameter contracts, return types, and expected edge behavior."
       },
       {
         "id": "GC-09",
         "file_path": "frontend/app.js",
         "line_number": 15,
+        "line_start": 15,
+        "line_end": 15,
         "symbol": "TODO Marker",
         "type": "todo_marker",
+        "evidence_type": "source_code",
         "severity": "low",
         "evidence": "// TODO: remove canvas fallback once WebGL feed stabilizes",
         "explanation": "Unresolved TODO comment found: '// TODO: remove canvas fallback once WebGL feed stabilizes'. Indicates incomplete or deferred implementation.",
         "confidence": 0.99,
+        "confidence_rationale": "Lexical line scan matched exact comment keyword.",
+        "limitations": "Comment may be historical commentary rather than active blocker.",
         "recommended_action": "Resolve deferred TODO task or formalize into project issue tracking."
       },
       {
         "id": "GC-10",
         "file_path": "backend/auth_legacy.py",
         "line_number": 14,
+        "line_start": 14,
+        "line_end": 18,
         "symbol": "decrypt_cold_vault_keys",
         "type": "orphaned_function",
+        "evidence_type": "source_code",
         "severity": "medium",
         "evidence": "def decrypt_cold_vault_keys(vault_path: str) -> Optional[bytes]:",
         "explanation": "Function 'decrypt_cold_vault_keys' is declared in 'backend/auth_legacy.py' but has zero internal callers across the repository.",
         "confidence": 0.9,
+        "confidence_rationale": "Global cross-file AST call graph search for identifier 'decrypt_cold_vault_keys' returned 0 call sites.",
+        "limitations": "Function might be called by an uninspected external consumer or dynamic reflection.",
         "recommended_action": "Confirm if 'decrypt_cold_vault_keys' is intended as an external public API or safe to prune."
       },
       {
         "id": "GC-11",
         "file_path": "backend/pipeline.py",
         "line_number": 29,
+        "line_start": 29,
+        "line_end": 38,
         "symbol": "legacy_raw_socket_streamer",
         "type": "orphaned_function",
+        "evidence_type": "source_code",
         "severity": "medium",
         "evidence": "def legacy_raw_socket_streamer(port: int = 9099):",
         "explanation": "Function 'legacy_raw_socket_streamer' is declared in 'backend/pipeline.py' but has zero internal callers across the repository.",
         "confidence": 0.9,
+        "confidence_rationale": "Global cross-file AST call graph search for identifier 'legacy_raw_socket_streamer' returned 0 call sites.",
+        "limitations": "Function might be called by an uninspected external consumer or dynamic reflection.",
         "recommended_action": "Confirm if 'legacy_raw_socket_streamer' is intended as an external public API or safe to prune."
       },
       {
         "id": "GC-12",
         "file_path": "backend/utils.py",
         "line_number": 5,
+        "line_start": 5,
+        "line_end": 9,
         "symbol": "normalize_reading",
         "type": "orphaned_function",
+        "evidence_type": "source_code",
         "severity": "medium",
         "evidence": "def normalize_reading(val: float, min_val: float, max_val: float) -> float:",
         "explanation": "Function 'normalize_reading' is declared in 'backend/utils.py' but has zero internal callers across the repository.",
         "confidence": 0.9,
+        "confidence_rationale": "Global cross-file AST call graph search for identifier 'normalize_reading' returned 0 call sites.",
+        "limitations": "Function might be called by an uninspected external consumer or dynamic reflection.",
         "recommended_action": "Confirm if 'normalize_reading' is intended as an external public API or safe to prune."
       },
       {
         "id": "GC-13",
         "file_path": "backend/server.py",
         "line_number": 30,
+        "line_start": 30,
+        "line_end": 33,
         "symbol": "get_anomalies",
         "type": "missing_test",
+        "evidence_type": "source_code",
         "severity": "high",
         "evidence": "@app.get(\"/api/v1/telemetry/anomalies\")",
         "explanation": "Critical anomaly detection endpoint lacks automated unit tests or integration coverage.",
         "confidence": 0.92,
+        "confidence_rationale": "Repository file list contains 0 test_*.py or spec files matching the endpoint.",
+        "limitations": "Manual end-to-end testing might have been performed during edge deployments.",
         "recommended_action": "Create tests/test_server.py using pytest & TestClient to assert response schemas and edge cases."
       },
       {
         "id": "GC-14",
         "file_path": "requirements.txt",
         "line_number": 3,
+        "line_start": 3,
+        "line_end": 3,
         "symbol": "pydantic==1.8.2",
         "type": "deprecated_dependency",
+        "evidence_type": "dependency_manifest",
         "severity": "medium",
         "evidence": "pydantic==1.8.2",
         "explanation": "Pydantic v1.8 is legacy. Modern ecosystem uses Pydantic v2 with Rust core for 5-20x speedup.",
         "confidence": 0.96,
+        "confidence_rationale": "Pinned to v1.8.2; v2.0+ was released in 2023 with breaking API changes.",
+        "limitations": "Migration requires updating validator syntax.",
         "recommended_action": "Migrate model definitions to Pydantic v2."
       },
       {
         "id": "GC-15",
         "file_path": "requirements.txt",
         "line_number": 4,
+        "line_start": 4,
+        "line_end": 4,
         "symbol": "requests==2.22.0",
         "type": "deprecated_dependency",
+        "evidence_type": "dependency_manifest",
         "severity": "medium",
         "evidence": "requests==2.22.0",
         "explanation": "Requests 2.22 is unmaintained and contains deprecated SSL adapter fallbacks.",
         "confidence": 0.96,
+        "confidence_rationale": "Version 2.22 was released in 2019; lacks recent HTTP connection pool fixes.",
+        "limitations": "Underlying urllib3 upgrade may be needed concurrently.",
         "recommended_action": "Upgrade requests to >=2.31.0."
       },
       {
         "id": "GC-16",
         "file_path": "requirements.txt",
         "line_number": 6,
+        "line_start": 6,
+        "line_end": 6,
         "symbol": "urllib3==1.25.10",
         "type": "deprecated_dependency",
+        "evidence_type": "dependency_manifest",
         "severity": "high",
         "evidence": "urllib3==1.25.10",
         "explanation": "Outdated urllib3 (<1.26) subject to known CVEs and incompatibility with modern OpenSSL.",
         "confidence": 0.96,
+        "confidence_rationale": "Direct version pin in requirements.txt is below the security threshold (1.26.0).",
+        "limitations": "Does not verify whether the vulnerable code paths are invoked at runtime.",
         "recommended_action": "Upgrade to urllib3>=2.0.0 or requests>=2.31.0."
       },
       {
         "id": "GC-17",
         "file_path": "package.json",
         "line_number": 6,
+        "line_start": 6,
+        "line_end": 6,
         "symbol": "chart.js (^2.9.4)",
         "type": "deprecated_dependency",
+        "evidence_type": "dependency_manifest",
         "severity": "low",
         "evidence": "\"chart.js\": \"^2.9.4\",",
         "explanation": "Chart.js v2 has breaking changes compared to Chart.js v4 with modern ESM packaging.",
         "confidence": 0.95,
+        "confidence_rationale": "Chart.js v2 was superseded by v3/v4 with performance rewrites.",
+        "limitations": "Chart.js v2 canvas drawing code still operates if unsupported features are unused.",
         "recommended_action": "Upgrade to Chart.js v4 or Recharts/ECharts."
       },
       {
         "id": "GC-18",
         "file_path": "package.json",
         "line_number": 8,
+        "line_start": 8,
+        "line_end": 8,
         "symbol": "moment (^2.29.1)",
         "type": "deprecated_dependency",
+        "evidence_type": "dependency_manifest",
         "severity": "medium",
         "evidence": "\"moment\": \"^2.29.1\"",
         "explanation": "Moment.js is in maintenance-only mode. The Moment team recommends against using it in new projects.",
         "confidence": 0.95,
+        "confidence_rationale": "Official maintainers declared Moment.js legacy in September 2020.",
+        "limitations": "Bundle size penalty (~70KB) rather than critical runtime CVE.",
         "recommended_action": "Migrate to modern tree-shakeable libraries like date-fns, Luxon, or native Intl API."
       }
     ],
@@ -347,15 +436,6 @@
           "label": "DEPRECATION_NOTICE.txt",
           "type": "module",
           "file_path": "DEPRECATION_NOTICE.txt",
-          "ghost_status": false,
-          "ghost_finding_id": null,
-          "loc": 0
-        },
-        {
-          "id": "mod:ground_truth.json",
-          "label": "ground_truth.json",
-          "type": "module",
-          "file_path": "ground_truth.json",
           "ghost_status": false,
           "ghost_finding_id": null,
           "loc": 0
@@ -781,8 +861,8 @@
         "expected_benefit": "Allows new maintainers to understand mathematical parameters, edge states, and algorithm expectations.",
         "relevant_files": [
           "backend/auth_legacy.py",
-          "backend/utils.py",
-          "backend/pipeline.py"
+          "backend/pipeline.py",
+          "backend/utils.py"
         ],
         "suggested_steps": [
           "Add Google or Sphinx style docstrings to calculate_sensor_entropy and decrypt_cold_vault_keys",
@@ -803,8 +883,8 @@
         "expected_benefit": "Prevents confusion about active networking protocols and reduces maintenance surface area.",
         "relevant_files": [
           "backend/auth_legacy.py",
-          "backend/utils.py",
-          "backend/pipeline.py"
+          "backend/pipeline.py",
+          "backend/utils.py"
         ],
         "suggested_steps": [
           "Verify absence of external socket consumers",
@@ -878,7 +958,72 @@
         "badge": "Guardian of Code"
       }
     ],
+    "hypothesis_timeline": [
+      {
+        "id": "HYP-01",
+        "epoch": "Genesis & Core Telemetry Buffer (April 2021)",
+        "observed_fact": "Commit 38eadad initialized repository with README.md declaring 'ChronoLog / AetherStream Edge Telemetry Core' and backend/utils.py math helpers.",
+        "inferred_hypothesis": "The project was originally architected as an edge daemon running on Alpine Linux ARM64 hardware to capture micro-meteorological sensor metrics (temperature, pressure, humidity) at weather stations.",
+        "source_files": [
+          "README.md",
+          "backend/utils.py",
+          "requirements.txt"
+        ],
+        "commit_hashes": [
+          "38eadad44eacb8d59f87b4296720e032a1ffd956"
+        ],
+        "uncertainty_notes": "Exact remote station hardware models and physical sensor buses (I2C/SPI) are not explicitly documented.",
+        "confidence": 0.98
+      },
+      {
+        "id": "HYP-02",
+        "epoch": "Rolling Window Anomaly Engine (June 2021)",
+        "observed_fact": "TelemetryWindowBuffer implemented in backend/pipeline.py computes running mean, variance, and flags points exceeding 2.5 standard deviations.",
+        "inferred_hypothesis": "The edge service evaluated meteorological signal stability locally, buffering only anomalous spikes for priority transmission to avoid saturating low-bandwidth satellite / edge links.",
+        "source_files": [
+          "backend/pipeline.py"
+        ],
+        "commit_hashes": [
+          "8533af9fecd8de375652353ac222eef9d684cb8a"
+        ],
+        "uncertainty_notes": "Fixed threshold_sigma=2.5 lacks auto-calibration logic or automated test verification.",
+        "confidence": 0.95
+      },
+      {
+        "id": "HYP-03",
+        "epoch": "Network Handshake & Technical Debt Ingestion (Sept 2021 - Jan 2022)",
+        "observed_fact": "FastAPI routing added in backend/server.py with station token verification. Insecure MD5 session hashing implemented in backend/auth_legacy.py with an unresolved FIXME comment. Canvas live visualizer added in frontend/app.js.",
+        "inferred_hypothesis": "As contributors Alex Chen and Dave Miller joined, network connectivity and operator monitoring screens were rapidly integrated. The MD5 hashing and unverified cold vault key function were temporary prototype placeholders that were never properly modernized.",
+        "source_files": [
+          "backend/auth_legacy.py",
+          "backend/server.py",
+          "frontend/app.js"
+        ],
+        "commit_hashes": [
+          "43b799304142bf444094a0b240b4f9ff70b33934",
+          "bcecd259658a27ab8d3fc05b9f01b5b89f3672be"
+        ],
+        "uncertainty_notes": "Whether the cold vault recovery function was ever invoked out-of-band by operator CLI scripts is uncertain.",
+        "confidence": 0.94
+      },
+      {
+        "id": "HYP-04",
+        "epoch": "Protocol Refactor & Project Abandonment (April 2022 - Nov 2022)",
+        "observed_fact": "Commit 6486e1a added fast batch processing while orphaning legacy_raw_socket_streamer. Final commit c5ed1f0 left DEPRECATION_NOTICE.txt confirming project decommissioning and team reassignment.",
+        "inferred_hypothesis": "An architectural migration to high-throughput batch buffers was in progress when corporate/team priorities shifted, resulting in the code being abandoned in an unmaintained, partially-migrated state.",
+        "source_files": [
+          "backend/pipeline.py",
+          "DEPRECATION_NOTICE.txt"
+        ],
+        "commit_hashes": [
+          "c5ed1f04d840b443f3850f6c38e1b402dca3a2a9",
+          "c5ed1f04d840b443f3850f6c38e1b402dca3a2a9"
+        ],
+        "uncertainty_notes": "Zero residual uncertainty on abandonment; confirmed by official deprecation notice file and 4+ years of Git dormancy.",
+        "confidence": 0.99
+      }
+    ],
     "offline_mode": true,
-    "active_ai_model": "Gemma 2B / Local Ollama (Grounded)"
+    "active_ai_model": "Gemma 2B (Local Ollama) & Deterministic Fallback"
   }
 }

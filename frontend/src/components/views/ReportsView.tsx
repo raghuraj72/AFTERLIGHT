@@ -4,7 +4,7 @@ import {
   ExternalLink, Sparkles, BarChart2 
 } from 'lucide-react';
 import { useInvestigation } from '../../context/InvestigationContext';
-import { getReportDownloadUrl, fetchBenchmark } from '../../services/api';
+import { getReportDownloadUrl, getReportHtmlUrl, fetchBenchmark } from '../../services/api';
 import { BenchmarkResult } from '../../types';
 
 export const ReportsView: React.FC = () => {
@@ -28,6 +28,10 @@ export const ReportsView: React.FC = () => {
 
   const downloadReport = () => {
     window.open(getReportDownloadUrl(currentInvestigation.id), '_blank');
+  };
+
+  const openHtmlDossier = () => {
+    window.open(getReportHtmlUrl(currentInvestigation.id), '_blank');
   };
 
   const handlePrint = () => {
@@ -54,7 +58,7 @@ export const ReportsView: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center space-x-3 print:hidden">
+        <div className="flex flex-wrap items-center gap-3 print:hidden">
           <button
             onClick={downloadReport}
             className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-relic-cyan/10 hover:bg-relic-cyan/20 border border-relic-cyan text-xs font-mono font-bold text-relic-cyan transition-colors"
@@ -64,11 +68,19 @@ export const ReportsView: React.FC = () => {
           </button>
 
           <button
+            onClick={openHtmlDossier}
+            className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/50 text-xs font-mono font-bold text-purple-300 transition-colors"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span>HTML Dossier / PDF</span>
+          </button>
+
+          <button
             onClick={handlePrint}
             className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-relic-panel hover:bg-relic-card border border-relic-border text-xs font-mono text-slate-300 transition-colors"
           >
             <Printer className="w-4 h-4" />
-            <span>Print / PDF</span>
+            <span>Print View</span>
           </button>
         </div>
       </div>

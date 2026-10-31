@@ -27,6 +27,8 @@ EXTENSION_LANGUAGE_MAP = {
     ".cpp": "C++",
 }
 
+IGNORE_FILES = {"ground_truth.json", "package-lock.json", ".gitignore"}
+
 def scan_repository(repo_path: str) -> Dict[str, Any]:
     if not os.path.exists(repo_path):
         raise ValueError(f"Repository path does not exist: {repo_path}")
@@ -41,6 +43,8 @@ def scan_repository(repo_path: str) -> Dict[str, Any]:
         dirs[:] = [d for d in dirs if d not in IGNORE_DIRS and not d.startswith(".")]
 
         for file in files:
+            if file in IGNORE_FILES:
+                continue
             full_path = os.path.join(root, file)
             rel_path = os.path.relpath(full_path, repo_path).replace("\\", "/")
 

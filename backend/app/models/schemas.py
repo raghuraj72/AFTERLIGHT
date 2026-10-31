@@ -8,6 +8,7 @@ class SourceCitation(BaseModel):
     line_end: Optional[int] = None
     snippet: Optional[str] = None
     explanation: Optional[str] = None
+    is_verified: bool = True
 
 class CommitCitation(BaseModel):
     commit_hash: str
@@ -15,17 +16,23 @@ class CommitCitation(BaseModel):
     date: str
     message: str
     relevance: Optional[str] = None
+    is_verified: bool = True
 
 class GhostCodeFinding(BaseModel):
     id: str
     file_path: str
     line_number: Optional[int] = None
+    line_start: Optional[int] = None
+    line_end: Optional[int] = None
     symbol: str
     type: str  # deprecated_crypto, orphaned_function, undocumented_function, unused_import, missing_test, todo_marker, deprecated_dependency
+    evidence_type: str = "source_code"  # source_code, git_history, dependency_manifest, model_hypothesis
     severity: str  # critical, high, medium, low
     evidence: str
     explanation: str
     confidence: float = Field(..., ge=0.0, le=1.0)
+    confidence_rationale: Optional[str] = None
+    limitations: Optional[str] = None
     recommended_action: str
 
 class CommitMilestone(BaseModel):
@@ -91,6 +98,16 @@ class GhostHuntMission(BaseModel):
     completed: bool = False
     badge: str
 
+class HypothesisItem(BaseModel):
+    id: str
+    epoch: str
+    observed_fact: str
+    inferred_hypothesis: str
+    source_files: List[str] = []
+    commit_hashes: List[str] = []
+    uncertainty_notes: str
+    confidence: float
+
 class AiAnswerResponse(BaseModel):
     question: str
     answer: str
@@ -101,6 +118,11 @@ class AiAnswerResponse(BaseModel):
     commit_citations: List[CommitCitation] = []
     uncertainty_notes: Optional[str] = None
     model_used: str
+    inference_source: str = "deterministic_ast_fallback"  # "gemma_ollama" or "deterministic_ast_fallback"
+    model_name: str = "deterministic-ast-v1"
+    is_generative: bool = False
+    grounding_status: str = "verified"  # verified, partial, unverified
+    unsupported_claims: List[str] = []
 
 class InvestigationResult(BaseModel):
     id: str
@@ -119,6 +141,7 @@ class InvestigationResult(BaseModel):
     health: HealthScoreBreakdown
     resurrection_plan: List[ResurrectionItem]
     missions: List[GhostHuntMission]
+    hypothesis_timeline: List[HypothesisItem] = []
     offline_mode: bool = True
     active_ai_model: str = "Gemma (Local/Ollama & Deterministic Fallback)"
 

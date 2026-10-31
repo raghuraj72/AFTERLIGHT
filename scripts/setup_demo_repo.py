@@ -21,11 +21,19 @@ def create_demo_repository():
     os.makedirs(backend_dir, exist_ok=True)
     os.makedirs(frontend_dir, exist_ok=True)
 
-    # Initialize git repo if not already
-    if not os.path.exists(os.path.join(DEMO_DIR, ".git")):
-        run_git(["init"], DEMO_DIR)
-        run_git(["config", "user.name", "Sarah Lin"], DEMO_DIR)
-        run_git(["config", "user.email", "sarah.lin@aetherstream.dev"], DEMO_DIR)
+    # Initialize git repo if not already, or recreate if incomplete
+    git_dir = os.path.join(DEMO_DIR, ".git")
+    if os.path.exists(git_dir):
+        check_res = run_git(["rev-list", "--count", "HEAD"], DEMO_DIR)
+        if check_res.returncode == 0 and check_res.stdout.strip() == "7":
+            print("Demo repository already contains 7 commits.")
+            return
+        import shutil
+        shutil.rmtree(git_dir, ignore_errors=True)
+
+    run_git(["init"], DEMO_DIR)
+    run_git(["config", "user.name", "Sarah Lin"], DEMO_DIR)
+    run_git(["config", "user.email", "sarah.lin@aetherstream.dev"], DEMO_DIR)
 
     # --- COMMIT 1: Initial Core ---
     readme_content = """# ChronoLog / AetherStream Edge Telemetry Core
@@ -82,7 +90,7 @@ def calculate_sensor_entropy(readings: list[float]) -> float:
     with open(os.path.join(backend_dir, "utils.py"), "w", encoding="utf-8") as f:
         f.write(utils_content)
 
-    run_git(["add", "."], DEMO_DIR)
+    run_git(["add", "README.md", "requirements.txt", "backend/utils.py"], DEMO_DIR)
     c1_env = {
         "GIT_AUTHOR_NAME": "Sarah Lin",
         "GIT_AUTHOR_EMAIL": "sarah.lin@aetherstream.dev",
@@ -90,7 +98,7 @@ def calculate_sensor_entropy(readings: list[float]) -> float:
         "GIT_COMMITTER_NAME": "Sarah Lin",
         "GIT_COMMITTER_DATE": "2021-04-12T10:14:00"
     }
-    run_git(["commit", "-m", "Init repo: ChronoLog Edge Telemetry Ingestion Core"], DEMO_DIR, c1_env)
+    run_git(["commit", "--allow-empty", "-m", "Init repo: ChronoLog Edge Telemetry Ingestion Core"], DEMO_DIR, c1_env)
 
     # --- COMMIT 2: Anomaly Detection Pipeline ---
     pipeline_content = """from typing import List, Dict, Any
@@ -130,7 +138,7 @@ def legacy_raw_socket_streamer(port: int = 9099):
     with open(os.path.join(backend_dir, "pipeline.py"), "w", encoding="utf-8") as f:
         f.write(pipeline_content)
 
-    run_git(["add", "."], DEMO_DIR)
+    run_git(["add", "backend/pipeline.py"], DEMO_DIR)
     c2_env = {
         "GIT_AUTHOR_NAME": "Sarah Lin",
         "GIT_AUTHOR_EMAIL": "sarah.lin@aetherstream.dev",
@@ -138,7 +146,7 @@ def legacy_raw_socket_streamer(port: int = 9099):
         "GIT_COMMITTER_NAME": "Sarah Lin",
         "GIT_COMMITTER_DATE": "2021-06-20T14:32:00"
     }
-    run_git(["commit", "-m", "feat(ingest): add rolling window buffer and anomaly detection heuristic"], DEMO_DIR, c2_env)
+    run_git(["commit", "--allow-empty", "-m", "feat(ingest): add rolling window buffer and anomaly detection heuristic"], DEMO_DIR, c2_env)
 
     # --- COMMIT 3: Security & Session Handshake ---
     auth_content = """import hashlib
@@ -199,7 +207,7 @@ def get_anomalies():
     with open(os.path.join(backend_dir, "server.py"), "w", encoding="utf-8") as f:
         f.write(server_content)
 
-    run_git(["add", "."], DEMO_DIR)
+    run_git(["add", "backend/auth_legacy.py", "backend/server.py"], DEMO_DIR)
     c3_env = {
         "GIT_AUTHOR_NAME": "Alex Chen",
         "GIT_AUTHOR_EMAIL": "alex.chen@aetherstream.dev",
@@ -207,7 +215,7 @@ def get_anomalies():
         "GIT_COMMITTER_NAME": "Alex Chen",
         "GIT_COMMITTER_DATE": "2021-09-15T11:05:00"
     }
-    run_git(["commit", "-m", "feat(security): implement session handshake and token vault"], DEMO_DIR, c3_env)
+    run_git(["commit", "--allow-empty", "-m", "feat(security): implement session handshake and token vault"], DEMO_DIR, c3_env)
 
     # --- COMMIT 4: Frontend Live-Feed Visualizer ---
     package_json = """{
@@ -270,7 +278,7 @@ export class SensorStreamWorker {
     with open(os.path.join(frontend_dir, "data_feed.js"), "w", encoding="utf-8") as f:
         f.write(data_feed_js)
 
-    run_git(["add", "."], DEMO_DIR)
+    run_git(["add", "package.json", "frontend/app.js", "frontend/data_feed.js"], DEMO_DIR)
     c4_env = {
         "GIT_AUTHOR_NAME": "Dave Miller",
         "GIT_AUTHOR_EMAIL": "dave.m@aetherstream.dev",
@@ -278,7 +286,7 @@ export class SensorStreamWorker {
         "GIT_COMMITTER_NAME": "Dave Miller",
         "GIT_COMMITTER_DATE": "2022-01-10T16:45:00"
     }
-    run_git(["commit", "-m", "feat(web): add dashboard live-feed visualizer with canvas radar"], DEMO_DIR, c4_env)
+    run_git(["commit", "--allow-empty", "-m", "feat(web): add dashboard live-feed visualizer with canvas radar"], DEMO_DIR, c4_env)
 
     # --- COMMIT 5: Refactor Pipeline ---
     # Update pipeline with batch method
@@ -291,7 +299,7 @@ export class SensorStreamWorker {
     with open(os.path.join(backend_dir, "pipeline.py"), "w", encoding="utf-8") as f:
         f.write(pipeline_v2)
 
-    run_git(["add", "."], DEMO_DIR)
+    run_git(["add", "backend/pipeline.py"], DEMO_DIR)
     c5_env = {
         "GIT_AUTHOR_NAME": "Sarah Lin",
         "GIT_AUTHOR_EMAIL": "sarah.lin@aetherstream.dev",
@@ -299,7 +307,7 @@ export class SensorStreamWorker {
         "GIT_COMMITTER_NAME": "Sarah Lin",
         "GIT_COMMITTER_DATE": "2022-04-03T09:20:00"
     }
-    run_git(["commit", "-m", "refactor(pipeline): transition to fast batch buffer; deprecate old raw socket streamer"], DEMO_DIR, c5_env)
+    run_git(["commit", "--allow-empty", "-m", "refactor(pipeline): transition to fast batch buffer; deprecate old raw socket streamer"], DEMO_DIR, c5_env)
 
     # --- COMMIT 6: Legacy hotfix ---
     auth_hotfix = auth_content + """
@@ -309,7 +317,7 @@ DEV_DEBUG_OVERRIDE = False  # DO NOT ENABLE IN PRODUCTION
     with open(os.path.join(backend_dir, "auth_legacy.py"), "w", encoding="utf-8") as f:
         f.write(auth_hotfix)
 
-    run_git(["add", "."], DEMO_DIR)
+    run_git(["add", "backend/auth_legacy.py"], DEMO_DIR)
     c6_env = {
         "GIT_AUTHOR_NAME": "Alex Chen",
         "GIT_AUTHOR_EMAIL": "alex.chen@aetherstream.dev",
@@ -317,14 +325,14 @@ DEV_DEBUG_OVERRIDE = False  # DO NOT ENABLE IN PRODUCTION
         "GIT_COMMITTER_NAME": "Alex Chen",
         "GIT_COMMITTER_DATE": "2022-08-19T17:50:00"
     }
-    run_git(["commit", "-m", "chore(legacy): temporary hotfix bypass for legacy auth; mark TODO for vault removal"], DEMO_DIR, c6_env)
+    run_git(["commit", "--allow-empty", "-m", "chore(legacy): temporary hotfix bypass for legacy auth; mark TODO for vault removal"], DEMO_DIR, c6_env)
 
     # --- COMMIT 7: Final abandoned commit ---
     # Add a marker file showing project decommissioning
     with open(os.path.join(DEMO_DIR, "DEPRECATION_NOTICE.txt"), "w", encoding="utf-8") as f:
         f.write("NOTICE: Project ChronoLog decommissioned in Nov 2022. Team transferred to Cloud telemetry unit.")
 
-    run_git(["add", "."], DEMO_DIR)
+    run_git(["add", "DEPRECATION_NOTICE.txt"], DEMO_DIR)
     c7_env = {
         "GIT_AUTHOR_NAME": "Sarah Lin",
         "GIT_AUTHOR_EMAIL": "sarah.lin@aetherstream.dev",
@@ -332,7 +340,7 @@ DEV_DEBUG_OVERRIDE = False  # DO NOT ENABLE IN PRODUCTION
         "GIT_COMMITTER_NAME": "Sarah Lin",
         "GIT_COMMITTER_DATE": "2022-11-05T13:12:00"
     }
-    run_git(["commit", "-m", "WIP: abandoned refactor to v2 protocol before project decommissioning"], DEMO_DIR, c7_env)
+    run_git(["commit", "--allow-empty", "-m", "WIP: abandoned refactor to v2 protocol before project decommissioning"], DEMO_DIR, c7_env)
 
     # Write the ground_truth.json for synthetic benchmark evaluation
     ground_truth = {

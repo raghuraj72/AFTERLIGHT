@@ -8,19 +8,25 @@ DEPRECATED_PYTHON_PKGS = {
         "legacy_max": "1.26.0",
         "severity": "high",
         "explanation": "Outdated urllib3 (<1.26) subject to known CVEs and incompatibility with modern OpenSSL.",
-        "action": "Upgrade to urllib3>=2.0.0 or requests>=2.31.0."
+        "action": "Upgrade to urllib3>=2.0.0 or requests>=2.31.0.",
+        "rationale": "Direct version pin in requirements.txt is below the security threshold (1.26.0).",
+        "limitations": "Does not verify whether the vulnerable code paths are invoked at runtime."
     },
     "pydantic": {
         "legacy_max": "1.9.0",
         "severity": "medium",
         "explanation": "Pydantic v1.8 is legacy. Modern ecosystem uses Pydantic v2 with Rust core for 5-20x speedup.",
-        "action": "Migrate model definitions to Pydantic v2."
+        "action": "Migrate model definitions to Pydantic v2.",
+        "rationale": "Pinned to v1.8.2; v2.0+ was released in 2023 with breaking API changes.",
+        "limitations": "Migration requires updating validator syntax."
     },
     "requests": {
         "legacy_max": "2.25.0",
         "severity": "medium",
         "explanation": "Requests 2.22 is unmaintained and contains deprecated SSL adapter fallbacks.",
-        "action": "Upgrade requests to >=2.31.0."
+        "action": "Upgrade requests to >=2.31.0.",
+        "rationale": "Version 2.22 was released in 2019; lacks recent HTTP connection pool fixes.",
+        "limitations": "Underlying urllib3 upgrade may be needed concurrently."
     }
 }
 
@@ -28,12 +34,16 @@ DEPRECATED_NODE_PKGS = {
     "moment": {
         "severity": "medium",
         "explanation": "Moment.js is in maintenance-only mode. The Moment team recommends against using it in new projects.",
-        "action": "Migrate to modern tree-shakeable libraries like date-fns, Luxon, or native Intl API."
+        "action": "Migrate to modern tree-shakeable libraries like date-fns, Luxon, or native Intl API.",
+        "rationale": "Official maintainers declared Moment.js legacy in September 2020.",
+        "limitations": "Bundle size penalty (~70KB) rather than critical runtime CVE."
     },
     "chart.js": {
         "severity": "low",
         "explanation": "Chart.js v2 has breaking changes compared to Chart.js v4 with modern ESM packaging.",
-        "action": "Upgrade to Chart.js v4 or Recharts/ECharts."
+        "action": "Upgrade to Chart.js v4 or Recharts/ECharts.",
+        "rationale": "Chart.js v2 was superseded by v3/v4 with performance rewrites.",
+        "limitations": "Chart.js v2 canvas drawing code still operates if unsupported features are unused."
     }
 }
 
@@ -57,12 +67,17 @@ def analyze_dependencies(repo_path: str, files_list: List[str], start_id: int = 
                                 id=f"GC-{current_id:02d}",
                                 file_path="requirements.txt",
                                 line_number=line_idx,
+                                line_start=line_idx,
+                                line_end=line_idx,
                                 symbol=clean,
                                 type="deprecated_dependency",
+                                evidence_type="dependency_manifest",
                                 severity=info["severity"],
                                 evidence=clean,
                                 explanation=info["explanation"],
                                 confidence=0.96,
+                                confidence_rationale=info["rationale"],
+                                limitations=info["limitations"],
                                 recommended_action=info["action"]
                             ))
                             current_id += 1
@@ -97,12 +112,17 @@ def analyze_dependencies(repo_path: str, files_list: List[str], start_id: int = 
                         id=f"GC-{current_id:02d}",
                         file_path="package.json",
                         line_number=line_no,
+                        line_start=line_no,
+                        line_end=line_no,
                         symbol=f"{pkg} ({version})",
                         type="deprecated_dependency",
+                        evidence_type="dependency_manifest",
                         severity=info["severity"],
                         evidence=evidence_line,
                         explanation=info["explanation"],
                         confidence=0.95,
+                        confidence_rationale=info["rationale"],
+                        limitations=info["limitations"],
                         recommended_action=info["action"]
                     ))
                     current_id += 1

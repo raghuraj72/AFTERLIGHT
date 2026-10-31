@@ -83,3 +83,7 @@ export async function fetchFileContent(invId: string, filePath: string): Promise
 export function getReportDownloadUrl(invId: string): string {
   return `${API_BASE}/investigations/${invId}/report/markdown`;
 }
+
+export function getReportHtmlUrl(invId: string): string {
+  return `${API_BASE}/investigations/${invId}/report/html`;
+}
